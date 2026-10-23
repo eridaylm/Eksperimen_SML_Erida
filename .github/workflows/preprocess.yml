@@ -1,0 +1,25 @@
+name: Preprocessing
+on:
+  push:
+    branches: [main]
+    paths: ["telco_raw/**", "preprocessing/automate_Erida.py"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.7"
+      - run: pip install pandas==2.2.3 scikit-learn==1.5.2 numpy==1.26.4
+      - run: python preprocessing/automate_Erida.py
+      - name: Commit dataset hasil preprocessing
+        run: |
+          git config user.name "eridaylm"
+          git config user.email "eridayalma999@gmail.com"
+          git add preprocessing/telco_preprocessing
+          git commit -m "Update preprocessed dataset" || echo "no changes"
+          git push
